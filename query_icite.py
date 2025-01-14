@@ -21,7 +21,10 @@ def create_icite_analysis(pmids):
     Returns:
         str: Search ID for the new iCite analysis.
     """
-    return "abc"
+    icite_url = "https://icite.od.nih.gov/searchid"
+    data = {"pmidText": ",".join(["{}".format(x) for x in pmids])}
+    response = requests.post(icite_url, json=data)
+    return response.json()["search_id"]
 
 
 
