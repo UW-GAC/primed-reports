@@ -28,7 +28,7 @@ input <- list(
 rmarkdown::render("primed_icite_report.Rmd", params=input)
 ```
 
-A [WDL workflow](https://dockstore.org/workflows/github.com/UW-GAC/primed-reports/primed-icite-report:main?tab=info) is also provided on Dockstore and as a .WDL file.
+A [WDL workflow](https://dockstore.org/workflows/github.com/UW-GAC/primed-reports/primed_icite_report:main?tab=info) is also provided on Dockstore and as a .WDL file.
 
 
 ## Developer info

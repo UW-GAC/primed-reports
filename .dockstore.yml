@@ -1,5 +1,5 @@
 version: 1.2
 workflows:
-    - name: primed-icite-report
+    - name: primed_icite_report
       subclass: WDL
-      primaryDescriptorPath: /primed-icite-report.wdl
+      primaryDescriptorPath: /primed_icite_report.wdl
