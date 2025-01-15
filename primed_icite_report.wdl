@@ -34,8 +34,6 @@ task query_icite {
         String pmid_column = "PMID"
     }
     command <<<
-        # Add to python path so we can import the pgs_catalog_client module.
-        export PYTHONPATH="/usr/local/primed-pgs-queries:$PYTHONPATH"
         # Query PGS catalog and save output.
         python3 /usr/local/primed-reports/query_icite.py \
             --pmid-url "~{pmid_url}" \
