@@ -49,16 +49,16 @@ search_id = readLines(params$search_id_file)
 
 # Introduction
 
-This report shows results from [iCite](https://icite.od.nih.gov/) for PRIMED publications.
+This report shows citation-based and other bibliometric results from [iCite](https://icite.od.nih.gov/) for PRIMED publications.
 
-# iCite analysis
+# All citations
 
 ```{r}
 icite_analysis_url = glue("https://icite.od.nih.gov/results?search_id={search_id}")
 ```
 
 View the [full iCite report for all PRIMED publications]( `r icite_analysis_url`).
-The full iCite report contains information about citations by PRIMED publications to any other publication.
+The full iCite report contains information about citations to PRIMED publications by any other publication.
 
 
 # Citations within PRIMED only
