@@ -1,0 +1,139 @@
+---
+title: "PRIMED iCite report "
+author: "PRIMED CC"
+date: "`r lubridate::today()`"
+format:
+  html:
+    toc: true
+    self_contained: yes
+execute:
+  echo: false
+output:
+  rmdformats::downcute:
+    fig_width: 10
+    fig_height: 4
+    thumbnails: false
+    css: "style.css"
+params:
+    records_file: "tmp/icite_records.json"
+    search_id_file: "tmp/icite_search_id.txt"
+---
+
+
+```{r library, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(jsonlite)
+# library(kableExtra)
+# library(treemapify)
+library(glue)
+
+options(knitr.kable.NA = '--')
+knitr::opts_chunk$set(echo=FALSE, message=FALSE)
+
+theme_set(
+  theme_bw()
+)
+```
+
+```{r}
+get_pubmed_link <- function(pmid) {
+  return(glue::glue("[{pmid}](https://pubmed.ncbi.nlm.nih.gov/{pmid})"))
+}
+```
+
+```{r}
+icite_report = fromJSON(file.path(params$records_file))
+search_id = readLines(params$search_id_file)
+```
+
+# Introduction
+
+This report shows results from [iCite](https://icite.od.nih.gov/) for PRIMED publications.
+
+# iCite analysis
+
+```{r}
+icite_analysis_url = glue("https://icite.od.nih.gov/results?search_id={search_id}")
+```
+
+View the [full iCite report for all PRIMED publications]( `r icite_analysis_url`).
+The full iCite report contains information about citations by PRIMED publications to any other publication.
+
+
+# Citations within PRIMED only
+
+The PRIMED CC has also generated metrics for citations by PRIMED publications to other PRIMED publications.
+
+```{r}
+icite <- icite_report
+
+# Rename icite data frame columns.
+names(icite) = names(icite) %>% tolower() %>% str_replace_all(" ", "_")
+
+# Tidy data such that there is one record per "cited_by".
+icite <- icite %>%
+  unnest_longer(cited_by)
+```
+
+```{r}
+# Consistency check.
+chk <- icite %>%
+  group_by(pmid, citation_count) %>%
+  summarise(n_cited_by = n()) %>%
+  filter(citation_count != n_cited_by)
+stopifnot(nrow(chk) == 0)
+```
+
+```{r}
+# Subset to those that are PRIMED citations.
+icite <- icite %>%
+  filter(cited_by %in% pmid)
+```
+
+## Total citations by publication year
+
+The following figure shows the publication year of the *cited* publication, for PRIMED publications that were cited by another PRIMED publication.
+
+```{r}
+ggplot(icite, aes(x=year)) +
+  geom_bar() +
+  xlab("Publication year")
+```
+
+## Total citations by year cited
+
+The following figure shows the publication year of the *citing* publication, for PRIMED publications that cited another PRIMED publication.
+
+```{r}
+x <- icite %>%
+  # First get the distinct set publications citing other publications
+  select(cited_by) %>%
+  # then get the year those publications were published in
+  left_join(icite_report, by=c("cited_by"="pmid"))
+ggplot(x, aes(x=year)) +
+  geom_bar() +
+  xlab("Citation year")
+```
+
+## Most cited publications
+
+The following table shows the 10 PRIMED publications that were most cited by other PRIMED publications.
+The "number of citations" columns shows the number of other PRIMED publications citing this publication.
+
+```{r}
+most_cited = icite %>%
+  group_by(pmid) %>%
+  summarise(n_primed_citations=n()) %>%
+  arrange(desc(n_primed_citations)) %>%
+  head(10)
+
+most_cited %>%
+  left_join(icite_report, by="pmid") %>%
+  select(pmid, n_primed_citations,  year, title,  authors) %>%
+  mutate(pmid=get_pubmed_link(pmid))%>%
+  rename(
+    `number of citations` = n_primed_citations
+  ) %>%
+  kable()
+```
