@@ -71,6 +71,7 @@ if __name__ == "__main__":
     # Write output to files.
     os.makedirs(args.outdir, exist_ok=True)
     with open(os.path.join(args.outdir, "icite_search_id.txt"), "w") as f:
-        f.write(search_id)
+        # Need to add a newline character to the search_id.
+        f.write(search_id + "\n")
 
     write_to_json(icite_records, os.path.join(args.outdir, "icite_records.json"))
