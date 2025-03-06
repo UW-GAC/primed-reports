@@ -93,27 +93,55 @@ icite <- icite %>%
 
 ## Total citations by publication year
 
+```{r}
+# Calculate counts.
+#stop()
+x = icite %>%
+  group_by(year) %>%
+  count()
+alt_text = paste(
+  "Bar chart depicting counts of citations within PRIMED by publication year as follows.",
+  x %>% mutate(string=glue("{year}: {n}")) %>% pull(string) %>% paste(collapse = ", ")
+)
+```
+
 The following figure shows the publication year of the *cited* publication, for PRIMED publications that were cited by another PRIMED publication.
 
-```{r}
-ggplot(icite, aes(x=year)) +
-  geom_bar() +
-  xlab("Publication year")
+```{r, fig.alt=alt_text}
+ggplot(x, aes(x=year, y=n)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label = n), vjust = -0.5, size = 3) +
+  xlab("Publication year") +
+  ylab("Count")
 ```
 
 ## Total citations by year cited
 
 The following figure shows the publication year of the *citing* publication, for PRIMED publications that cited another PRIMED publication.
 
+
 ```{r}
+# Calculate counts.
 x <- icite %>%
   # First get the distinct set publications citing other publications
   select(cited_by) %>%
   # then get the year those publications were published in
-  left_join(icite_report, by=c("cited_by"="pmid"))
-ggplot(x, aes(x=year)) +
-  geom_bar() +
-  xlab("Citation year")
+  left_join(icite_report, by=c("cited_by"="pmid")) %>%
+  group_by(year) %>%
+  count()
+
+alt_text = paste(
+  "Bar chart depicting counts of citing publications by publication year as follows.",
+  x %>% mutate(string=glue("{year}: {n}")) %>% pull(string) %>% paste(collapse = ", ")
+)
+```
+
+```{r, fig.alt=alt_text}
+ggplot(x, aes(x=year, y=n)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label = n), vjust = -0.5, size = 3) +
+  xlab("Citation year") +
+  ylab("Count")
 ```
 
 ## Most cited publications
