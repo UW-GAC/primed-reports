@@ -1,4 +1,5 @@
 ---
+lang: en
 title: "PRIMED iCite report "
 author: "PRIMED CC"
 date: "`r lubridate::today()`"
