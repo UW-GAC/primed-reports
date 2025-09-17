@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import requests
 
+
 def write_to_json(x, filename):
     with open(filename, "w") as f:
         f.write(json.dumps(x, default=str, indent=2))
@@ -19,11 +20,14 @@ def create_icite_analysis(pmids):
     Returns:
         str: Search ID for the new iCite analysis.
     """
-    icite_url = "https://icite.od.nih.gov/searchid"
-    data = {"pmidText": ",".join(["{}".format(x) for x in pmids])}
+    icite_url = "https://icite.od.nih.gov/iciterest/direct-search"
+    data = {
+        "pmids": pmids,
+        "userType": "API",
+        "searchType": "Third Party",
+    }
     response = requests.post(icite_url, json=data)
-    return response.json()["search_id"]
-
+    return response.json()["id"]
 
 
 def get_icite_records(pmids):
@@ -45,10 +49,21 @@ if __name__ == "__main__":
     # Parse arguments.
     parser = argparse.ArgumentParser()
     input_group = parser.add_mutually_exclusive_group(required=True)
-    input_group.add_argument("--pmid-file", type=str, help="CSV file with PMIDs in a column")
-    input_group.add_argument("--pmid-url", type=str, help="URL to a CSV file with PMIDs in a column")
-    parser.add_argument("--pmid-header", type=str, default="PMID", help="Header for PMID column in pmid-file")
-    parser.add_argument("--outdir", help="Directory in which output will be stored", default=".")
+    input_group.add_argument(
+        "--pmid-file", type=str, help="CSV file with PMIDs in a column"
+    )
+    input_group.add_argument(
+        "--pmid-url", type=str, help="URL to a CSV file with PMIDs in a column"
+    )
+    parser.add_argument(
+        "--pmid-header",
+        type=str,
+        default="PMID",
+        help="Header for PMID column in pmid-file",
+    )
+    parser.add_argument(
+        "--outdir", help="Directory in which output will be stored", default="."
+    )
 
     args = parser.parse_args()
 
