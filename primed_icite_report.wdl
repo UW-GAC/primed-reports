@@ -46,7 +46,7 @@ task query_icite {
         File icite_search_id_file = "output/icite_search_id.txt"
     }
     runtime {
-        docker: "uwgac/primed-reports:0.1.2"
+        docker: "uwgac/primed-reports:0.1.3"
     }
 }
 
@@ -67,6 +67,6 @@ task run_icite_report {
         File report_file = "output/primed_icite_report.html"
     }
     runtime {
-        docker: "uwgac/primed-reports:0.1.2"
+        docker: "uwgac/primed-reports:0.1.3"
     }
 }
