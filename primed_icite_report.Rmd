@@ -55,7 +55,7 @@ This report shows citation-based and other bibliometric results from [iCite](htt
 # All citations
 
 ```{r}
-icite_analysis_url = glue("https://icite.od.nih.gov/results?search_id={search_id}")
+icite_analysis_url = glue("https://icite.od.nih.gov/results?searchId={search_id}")
 ```
 
 View the [full iCite report for all PRIMED publications]( `r icite_analysis_url`).
